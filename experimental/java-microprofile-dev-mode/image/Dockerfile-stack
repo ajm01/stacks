@@ -1,4 +1,4 @@
-FROM openjdk8-openj9-local
+FROM adoptopenjdk/openjdk8-openj9
 
 USER root
 RUN  apt-get -qq update \
@@ -15,7 +15,7 @@ RUN mvn install dependency:go-offline -DskipTests -f pom-dev.xml
 
 WORKDIR /project/user-app
 
-ENV APPSODY_MOUNTS="~/.m2/repository:/root/.m2/repository;src:/project/user-app/src;pom.xml:/project/user-app/pom.xml"
+ENV APPSODY_MOUNTS="~/.m2/repository:/root/.m2/repository;src:/project/user-app/src;pom.xml:/project/user-app/pom.xml;migrationassets:/project/user-app/migrationassets"
 ENV APPSODY_DEPS=/project/user-app/target
 
 ENV APPSODY_WATCH_DIR=/project/user-app
@@ -25,8 +25,8 @@ ENV APPSODY_WATCH_REGEX="(pom.xml)$"
 ENV APPSODY_INSTALL="../validate.sh && mvn install -DskipTests && /project/install-dev-deps.sh"
 
 ENV APPSODY_RUN="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn liberty:dev -DskipTests"
-ENV APPSODY_RUN_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn liberty:dev -DskipTests"
-ENV APPSODY_RUN_KILL=true
+#ENV APPSODY_RUN_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn liberty:dev -DskipTests"
+#ENV APPSODY_RUN_KILL=true
 
 ENV APPSODY_DEBUG="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn liberty:dev -Dliberty.debug.port=7777"
 ENV APPSODY_DEBUG_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' mvn liberty:dev -Dliberty.debug.port=7777"
