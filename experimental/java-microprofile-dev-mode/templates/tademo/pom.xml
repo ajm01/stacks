@@ -7,41 +7,15 @@
     <parent>
         <groupId>dev.appsody</groupId>
         <artifactId>java-microprofile-dev-mode</artifactId>
-        <version>
-0.2.15
-        </version>
+        <version>0.2.15</version>
     </parent>
 
-    <!--
-    <groupId>dev.appsody.starter.java-microprofile</groupId>
-    <artifactId>starter-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
-	-->
     <groupId>dev.appsody.starter.java-microprofile</groupId>
     <artifactId>modresorts</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
 
-    <!--
-    <repositories>
-        <repository>
-            <id>TALocalRepo</id>
-            <name>TALocalRepo</name>
-            <url>file://project/user-app/migrationassets</url>
-        </repository>
-    </repositories>
--->
     <dependencies>
-        <!-- TA migration war specified as a dependency -->
-        <!--
-        <dependency>
-            <groupId>ta.migratedapp</groupId>
-            <artifactId>modresorts</artifactId>
-            <version>1.0</version>
-            <type>war</type>
-        </dependency>
-		-->
         <!-- Open Liberty Features -->
         <dependency>
             <groupId>io.openliberty.features</groupId>
@@ -111,18 +85,7 @@
                 </file>
             </activation>
             <build>
-                <!--
-			<dependencies>
-				<dependency>
-					<groupId>ta.migratedapp</groupId>
-					<artifactId>modresorts</artifactId>
-					<version>1.0</version>
-					<type>war</type>
-				</dependency>
-			</dependencies>
-			-->
                 <plugins>
-
                     <plugin>
                         <!-- using this to copy migrated war -->
                         <artifactId>maven-resources-plugin</artifactId>
