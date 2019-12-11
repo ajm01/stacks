@@ -13,15 +13,14 @@ COPY ./util /project/util
 RUN  /project/util/check_version build
 
 # Copy the user's application pom and resolve all dependencies
-COPY ./user-app/pom.xml /project/user-app/pom.xml
+COPY ./user-app /project/user-app
 COPY ./validate.sh /project/user-app/validate.sh
 RUN cd /project/user-app && ./validate.sh  && mvn package -Dskip=true -DskipTests 
 
 # Download Open Liberty here to prevent redownloading each time the app is changed
 RUN cd /project/user-app && mvn -B liberty:install-server
 
-# Copy and build the application source
-COPY ./user-app/src /project/user-app/src
+# Build the application source - don't need to do this in the binary case
 RUN cd /project/user-app && mvn package -DskipTests
 
 RUN cd /project/user-app/target && \
