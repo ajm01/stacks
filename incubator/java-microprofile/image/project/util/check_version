@@ -27,7 +27,8 @@ sniff() {
 
 case "$ACTION" in
   build)
-    wget -q https://repo1.maven.org/maven2/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0.jar
+	mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.1:get -Dartifact=org.osgi:org.osgi.core:6.0.0
+	cp ~/.m2/repository/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0.jar .
     javac -cp org.osgi.core-6.0.0.jar *.java
 
     sniff "[0.3,0.4)" "0.3.7" 0
@@ -39,6 +40,7 @@ case "$ACTION" in
     if [ $# -lt 2 ]; then
         echo "Specify version information: check_version contains <range_spec> <version>"
         exit 1
+		
     fi
 
     range_check "$1" "$2"
