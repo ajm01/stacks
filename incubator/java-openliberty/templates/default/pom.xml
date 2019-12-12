@@ -99,11 +99,7 @@
                         <version>${version.openliberty-runtime}</version>
                         <type>zip</type>
                     </assemblyArtifact>
-                    <serverName>defaultServer</serverName>
                     <stripVersion>true</stripVersion>
-                    <configFile>src/main/liberty/config/server.xml</configFile>
-                    <packageFile>${package.file}</packageFile>
-                    <include>${packaging.type}</include>
                     <serverStartTimeout>120</serverStartTimeout>
                     <bootstrapProperties>
                         <default.http.port>${http.port}</default.http.port>
