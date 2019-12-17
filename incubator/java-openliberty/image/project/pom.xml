@@ -13,6 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <openliberty.install.dir>/opt/ibm</openliberty.install.dir>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- Plugins -->
@@ -22,7 +23,7 @@
         <version.maven-failsafe-plugin>3.0.0-M1</version.maven-failsafe-plugin>
         <!-- OpenLiberty runtime -->
         <liberty.groupId>io.openliberty</liberty.groupId>
-        <liberty.artifactId>openliberty-runtime</liberty.artifactId>
+        <liberty.artifactId>openliberty-kernel</liberty.artifactId>
         <version.openliberty-runtime>19.0.0.12</version.openliberty-runtime>
         <version.liberty-maven-plugin>3.1</version.liberty-maven-plugin>
         <http.port>9080</http.port>
@@ -78,4 +79,28 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+              <property>
+                <name>env.APPSODY_DEV_MODE</name>
+              </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>io.openliberty.tools</groupId>
+                            <artifactId>liberty-maven-plugin</artifactId>
+                            <version>${version.liberty-maven-plugin}</version>
+                            <configuration>
+                                <runtimeInstallDirectory>${openliberty.install.dir}</runtimeInstallDirectory>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>

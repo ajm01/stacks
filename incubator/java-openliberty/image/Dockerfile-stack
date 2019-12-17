@@ -16,8 +16,7 @@ RUN  /project/util/check_version build
 WORKDIR /project/
 RUN mkdir -p /mvn/repository
 RUN mvn -B -Dmaven.repo.local=/mvn/repository -N io.takari:maven:wrapper -Dmaven=$(mvn help:evaluate -Dexpression=maven.version -q -DforceStdout)
-RUN mvn -B -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests
-RUN mvn -Dmaven.repo.local=/mvn/repository install dependency:go-offline -DskipTests -f pom-dev.xml
+RUN mvn -B -Pdev -Dmaven.repo.local=/mvn/repository liberty:install-server install dependency:go-offline
 
 WORKDIR /project/user-app
 
@@ -28,25 +27,27 @@ ENV APPSODY_WATCH_DIR=/project/user-app
 ENV APPSODY_WATCH_IGNORE_DIR=/project/user-app/target
 
 # Work around v3.1 issues with dev mode reacting to pom.xml change but should eventually not require this.
-ENV APPSODY_WATCH_REGEX="^.*(.xml)$"
+
+ENV APPSODY_WATCH_REGEX="^pom\.xml$"
 
 ENV APPSODY_USER_RUN_AS_LOCAL=true
 
-ENV APPSODY_PREP="../validate.sh && mvn -B -Dmaven.repo.local=/mvn/repository install -DskipTests && /project/install-dev-deps.sh"
+# Set APPSODY_DEV_MODE to get in the habit in case we need it someday
+ENV APPSODY_PREP="export APPSODY_DEV_MODE=prep;  ../validate.sh"
 
-ENV APPSODY_RUN="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' ../validate.sh && mvn -B -Dmaven.repo.local=/mvn/repository liberty:dev"
+ENV APPSODY_RUN="export APPSODY_DEV_MODE=run ; mvn -B -Dmaven.repo.local=/mvn/repository liberty:dev"
 # See ENV APPSODY_WATCH_REGEX comment
-ENV APPSODY_RUN_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' ../validate.sh && mvn -Dmaven.repo.local=/mvn/repository liberty:dev"
+ENV APPSODY_RUN_ON_CHANGE="export APPSODY_DEV_MODE=run; ../validate.sh && mvn -Dmaven.repo.local=/mvn/repository liberty:dev"
 ENV APPSODY_RUN_KILL=true
 
-ENV APPSODY_DEBUG="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' ../validate.sh && mvn -B -Dmaven.repo.local=/mvn/repository liberty:dev"
+ENV APPSODY_DEBUG="export APPSODY_DEV_MODE=debug ; mvn -B -Dmaven.repo.local=/mvn/repository liberty:dev"
 # See ENV APPSODY_WATCH_REGEX comment
-ENV APPSODY_DEBUG_ON_CHANGE="JVM_ARGS='-javaagent:resources/javametrics-agent.jar' ../validate.sh && mvn -Dmaven.repo.local=/mvn/repository liberty:dev"
+ENV APPSODY_DEBUG_ON_CHANGE="export APPSODY_DEV_MODE=debug ; ../validate.sh && mvn -Dmaven.repo.local=/mvn/repository liberty:dev"
 ENV APPSODY_DEBUG_KILL=true
 
-ENV APPSODY_TEST="mvn -B -Dmaven.repo.local=/mvn/repository verify"
+ENV APPSODY_TEST="export APPSODY_DEV_MODE=test ; exec mvn -B -Dmaven.repo.local=/mvn/repository clean package liberty:create liberty:install-feature liberty:start liberty:deploy failsafe:integration-test@it-exec liberty:stop failsafe:verify"
 ENV APPSODY_TEST_ON_CHANGE=""
-ENV APPSODY_TEST_KILL=false
+ENV APPSODY_TEST_KILL=true
 
 ENV PORT=9080
 
