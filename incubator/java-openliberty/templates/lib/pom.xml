@@ -7,22 +7,23 @@
 
     <parent><!--required parent POM-->
         <groupId>dev.appsody</groupId>
-        <artifactId>java-microprofile</artifactId>
-        <version>[0.2, 0.4)</version>
-        <relativePath/>
-    </parent>
+        <artifactId>java-openliberty</artifactId>
+        <version>[0.1, 0.2)</version>
+        </parent>
 
-    <groupId>dev.appsody.starter.java-microprofile</groupId>
-    <artifactId>tamigration</artifactId>
-    <version>1.0</version>
+    <groupId>dev.appsody.starter.java-openliberty</groupId>
+    <artifactId>starterAppLibs</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <dependencies>
-        <!-- Open Liberty Features -->
+    <dependencies>        
+<!-- Aggregate of MicroProfile APIs -->
         <dependency>
-            <groupId>io.openliberty.features</groupId>
-            <artifactId>microProfile-3.0</artifactId>
-            <type>esa</type>
+            <groupId>org.eclipse.microprofile</groupId>
+            <artifactId>microprofile</artifactId>
+            <version>3.2</version>
+            <type>pom</type>
+            <scope>provided</scope>
         </dependency>
         <!-- For tests -->
         <dependency>
@@ -115,6 +116,30 @@
           </execution>
         </executions>
       </plugin>
+        <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <id>copy-war-to-liberty</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/liberty/wlp/usr/servers/defaultServer/apps</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>target</directory>
+                                <includes>
+                                    <include>*.war</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+           </executions>
+        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -122,7 +147,6 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <packagingExcludes>pom.xml</packagingExcludes>
-					<skip>true</skip>
                 </configuration>
             </plugin>
             <!-- Enable liberty-maven plugin -->
@@ -136,13 +160,10 @@
                         <version>${version.openliberty-runtime}</version>
                         <type>zip</type>
                     </assemblyArtifact>
-                    <serverName>defaultServer</serverName>
-                    <stripVersion>false</stripVersion>
-					<looseApplication>false</looseApplication>
-                    <configFile>src/main/liberty/config/server.xml</configFile>
-                    <packageFile>${package.file}</packageFile>
-                    <include>${packaging.type}</include>
-                    <serverStartTimeout>120</serverStartTimeout>
+                    <stripVersion>
+true
+</stripVersion>
+					<serverStartTimeout>120</serverStartTimeout>
                     <bootstrapProperties>
                         <default.http.port>${http.port}</default.http.port>
                         <default.https.port>${https.port}</default.https.port>
@@ -181,7 +202,9 @@
                 <executions>
                     <execution>
                         <phase>integration-test</phase>
-                        <id>integration-test</id>
+                        <id>
+it-exec
+</id>
                         <goals>
                             <goal>integration-test</goal>
                         </goals>

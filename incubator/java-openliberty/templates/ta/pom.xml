@@ -8,7 +8,9 @@
     <parent><!--required parent POM-->
         <groupId>dev.appsody</groupId>
         <artifactId>java-openliberty</artifactId>
-        <version>[0.1, 0.4)</version>
+        <version>
+[0.1, 0.2)
+</version>
     </parent>
 
     <groupId>dev.appsody.starter.java-openliberty</groupId>
@@ -17,12 +19,25 @@
     <packaging>war</packaging>
 
     <dependencies>
-        <!-- Open Liberty Features -->
+        
+<!-- Aggregate of MicroProfile APIs -->
         <dependency>
-            <groupId>io.openliberty.features</groupId>
-            <artifactId>microProfile-3.0</artifactId>
-            <type>esa</type>
-        </dependency>
+            <groupId>
+org.eclipse.microprofile
+</groupId>
+            <artifactId>
+microprofile
+</artifactId>
+            
+<version>3.2</version>
+            
+<type>
+pom
+</type>
+        
+<scope>provided</scope>
+        
+</dependency>
         <!-- For tests -->
         <dependency>
             <groupId>junit</groupId>
@@ -136,6 +151,24 @@
                         </resources>
                     </configuration>
                 </execution>
+                <execution>
+                    <id>copy-war-to-liberty</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/liberty/wlp/usr/servers/defaultServer/apps</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>target</directory>
+                                <includes>
+                                    <include>*.war</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
            </executions>
         </plugin>
             <plugin>
@@ -159,15 +192,8 @@
                         <version>${version.openliberty-runtime}</version>
                         <type>zip</type>
                     </assemblyArtifact>
-                    <serverName>defaultServer</serverName>
-                    <stripVersion>
-true
-</stripVersion>
-					<looseApplication>false</looseApplication>
-                    <configFile>src/main/liberty/config/server.xml</configFile>
-                    <packageFile>${package.file}</packageFile>
-                    <include>${packaging.type}</include>
-                    <serverStartTimeout>120</serverStartTimeout>
+                    <stripVersion>true</stripVersion>
+					<serverStartTimeout>120</serverStartTimeout>
                     <bootstrapProperties>
                         <default.http.port>${http.port}</default.http.port>
                         <default.https.port>${https.port}</default.https.port>
@@ -206,7 +232,7 @@ true
                 <executions>
                     <execution>
                         <phase>integration-test</phase>
-                        <id>integration-test</id>
+                        <id>it-exec</id>
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
