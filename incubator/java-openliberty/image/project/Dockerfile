@@ -13,12 +13,12 @@ COPY ./util /project/util
 RUN  /project/util/check_version build
 
 # Copy the user's application pom and resolve all dependencies, also trigger Open Liberty install
-COPY ./user-app /project/user-app
+COPY ./user-app/pom.xml /project/user-app/pom.xml
 COPY ./validate.sh /project/user-app/validate.sh
 RUN cd /project/user-app && ./validate.sh
 
 # Copy and build the application source, and run unit tests
-COPY ./user-app/src /project/user-app/src
+COPY ./user-app /project/user-app
 RUN cd /project/user-app && mvn liberty:create package
 
 RUN cd /project/user-app/target/liberty/wlp/usr/servers && \
